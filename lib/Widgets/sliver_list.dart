@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
-
-class SliverListBldr extends StatelessWidget {
-  SliverListBldr({
-    Key? key,
-  }) : super(key: key);
+class SliverListBldr extends StatefulWidget {
+  SliverListBldr({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      sliver: _SliverGrid(context),
-    );
-  }
+  _SliverListBldrState createState() => _SliverListBldrState();
+}
+
+class _SliverListBldrState extends State<SliverListBldr>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
   final List<String> titles = [
     "صحيح البخاري",
     "صحيح مسلم",
@@ -37,70 +35,134 @@ class SliverListBldr extends StatelessWidget {
     "المصنف لعبد الرزاق",
   ];
 
+  final List<Color> bookBackgrounds = [
+    const Color(0xFFFFF8E1),
+    const Color(0xFFFFECB3),
+    const Color(0xFFFFE0B2),
+    const Color(0xFFFFE082),
+    const Color(0xFFFFD54F),
+    const Color(0xFFF0F4C3),
+    const Color(0xFFF8BBD0),
+    const Color(0xFFE1BEE7),
+    const Color(0xFFB2EBF2),
+    const Color(0xFFB3E5FC),
+    const Color(0xFFBBDEFB),
+    const Color(0xFFC8E6C9),
+    const Color(0xFFDCEDC8),
+    const Color(0xFFFFF3E0),
+    const Color(0xFFFFE5E5),
+  ];
 
-  Widget _SliverGrid(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Align(
-        alignment: Alignment.center,
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 6,
-          runSpacing: 4,
-          children: titles.map((title) {
-            return _ItemBookName(context, title); // Pass the title parameter
-          }).toList(),
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
+    Future.delayed(Duration(milliseconds: 200), () {
+      _animationController.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      sliver: SliverGrid(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          childAspectRatio: 0.55,
+          crossAxisSpacing: 4,
+          mainAxisSpacing: 4,
+        ),
+        delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+            // Calculate staggered animation delay based on index
+            final Animation<double> animation = CurvedAnimation(
+              parent: _animationController,
+              curve: Interval(
+                (index / titles.length) * 0.5, // Stagger over first 50% of total duration
+                (index / titles.length) * 0.5 + 0.5, // End at different times
+                curve: Curves.easeOutCubic,
+              ),
+            );
+
+            return AnimatedBuilder(
+              animation: animation,
+              builder: (context, child) {
+                return Transform.translate(
+                  offset: Offset(0, 50 * (1 - animation.value)),
+                  child: Opacity(
+                    opacity: animation.value,
+                    child: child,
+                  ),
+                );
+              },
+              child: _ItemBookName(
+                context,
+                titles[index],
+                bookBackgrounds[index % bookBackgrounds.length],
+              ),
+            );
+          },
+          childCount: titles.length,
         ),
       ),
     );
   }
 
-  Widget _ItemBookName(BuildContext context, String title) {
-    return IntrinsicWidth(
-      // This helps with wrapping content width
-      child: Card(
-        child: Container(
-          constraints: BoxConstraints(
-            minWidth: 120, // Minimum width to prevent too narrow items
-            maxWidth: 200, // Maximum width to prevent too wide items
-          ),
-          decoration: BoxDecoration(
-            borderRadius: kBorderRadius,
-            color: Colors.amber[100]?.withOpacity(0.3),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 32.0, horizontal: 6.0),
-                child: Expanded(
-                    child: Text(
-                  title,
-                  // maxLines: 1,
-                  // overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center, // Center text alignment
-                  style: TextStyle(
-                      fontFamily: 'mtnTitle_aldahabi',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 32),
-                )),
-              ),
-              Divider(
-                color: Colors.grey,
-                thickness: 1,
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
+  Widget _ItemBookName(BuildContext context, String title, Color bookBackground) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: kBorderRadius),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: kBorderRadius,
+          color: bookBackground,
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              flex: 7,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 2.0),
                 child: Center(
-                  // Center widget added here
                   child: Text(
                     title,
-                    softWrap: true,
-                    textAlign: TextAlign.center, // Center text alignment
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'mtnTitle_aldahabi',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 32,
+                    ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+            Divider(
+              color: Colors.grey,
+              thickness: 1,
+            ),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: EdgeInsets.all(2.0),
+                child: Center(
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

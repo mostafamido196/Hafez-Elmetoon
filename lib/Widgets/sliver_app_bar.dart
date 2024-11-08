@@ -19,9 +19,17 @@ class SliverAppBarBldr extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             // Background image
-            const Image(
-              image: AssetImage('assets/Images/yellow.jpeg'),
-              fit: BoxFit.cover,
+            Container(
+              // margin: EdgeInsets.only(right: 16.0,left: 16.0,top: 64.0,),  // Adjust the margin as needed
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(32.0),  // Adjust the radius as needed
+                image: DecorationImage(
+                  image: AssetImage('assets/Images/yellow.jpeg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              width: double.infinity,  // You can adjust width if needed
+              height: 200.0,  // You can adjust the height as needed
             ),
             // Overlayed text
             Center(
