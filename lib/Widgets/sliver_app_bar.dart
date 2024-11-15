@@ -36,14 +36,10 @@ class SliverAppBarBldr extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.all(16.0),
                 color: Colors.black.withOpacity(0), // semi-transparent background
-                child: const Text(
+                child:  Text(
                   "لا تحسبن المجد تمرا أنت آكله \n لن تبلغ المجد حتى تلعق الصبرا",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style:Theme.of(context).textTheme.headlineMedium ,
                 ),
               ),
             ),

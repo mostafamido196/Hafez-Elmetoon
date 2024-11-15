@@ -1,26 +1,40 @@
 import 'package:flutter/material.dart';
 
+import 'AppTextStyle.dart';
+import 'CustomAppBar.dart';
 import 'Widgets/sliver_app_bar.dart';
 import 'Widgets/sliver_list.dart';
 import 'Widgets/sliver_search.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(),
+    return  MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+          textTheme: TextTheme(
+            // label body title header
+            headlineLarge: AppTextStyles.extraLarge,
+            headlineMedium: AppTextStyles.extraMedium,
+            titleLarge: AppTextStyles.titleLarge,
+            titleMedium: AppTextStyles.titleMedium,
+            titleSmall: AppTextStyles.titleSmall,
+            bodyLarge: AppTextStyles.titleLarge,
+            bodyMedium: AppTextStyles.titleMedium,
+            bodySmall: AppTextStyles.titleSmall,
+          ),
+        ),
+        home: const MyHomePage(),
+
     );
   }
 }
@@ -31,7 +45,6 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
-
 
 class _MyHomePageState extends State<MyHomePage> {
   late ScrollController _scrollController;
@@ -55,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _scrollToTop() {
     _scrollController.animateTo(
       0.0,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 200),
       curve: Curves.easeOutCubic,
     );
   }
@@ -84,8 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
             top: 0,
             left: 0,
             right: 0,
-            child: AppBar(
-              title: Text('حافظ المتون'),
+            child: CommonAppBar(
+              title: 'حافظ المتون',
               backgroundColor: Colors.yellow.withOpacity(0.6),
               elevation: 20,
               leading: IconButton(

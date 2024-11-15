@@ -137,11 +137,7 @@ class _SliverListBldrState extends State<SliverListBldr>
                   child: Text(
                     title,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'mtnTitle_aldahabi',
-                      fontWeight: FontWeight.bold,
-                      fontSize: 32,
-                    ),
+                    style: Theme.of(context).textTheme.headlineLarge,
                   ),
                 ),
               ),

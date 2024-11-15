@@ -45,6 +45,7 @@ class SearchBar extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: TextFormField(
+              style: Theme.of(context).textTheme.titleMedium,
               textAlignVertical: TextAlignVertical.center,
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.only(top: 12.0),
