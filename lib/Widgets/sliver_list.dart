@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
+
 class SliverListBldr extends StatefulWidget {
   SliverListBldr({Key? key}) : super(key: key);
 
@@ -73,11 +74,23 @@ class _SliverListBldrState extends State<SliverListBldr>
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    int noRowItems;
+    if (screenWidth < 400) {
+      noRowItems = 3;  // Very small screens (small phones)
+    } else if (screenWidth < 600) {
+      noRowItems = 4;  // Medium screens (regular phones)
+    } else if (screenWidth < 900) {
+      noRowItems = 5;  // Large screens (tablets)
+    } else {
+      noRowItems = 7;  // Very large screens
+    }
+
     return SliverPadding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       sliver: SliverGrid(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
+          crossAxisCount: noRowItems,
           childAspectRatio: 0.55,
           crossAxisSpacing: 4,
           mainAxisSpacing: 4,
@@ -88,7 +101,8 @@ class _SliverListBldrState extends State<SliverListBldr>
             final Animation<double> animation = CurvedAnimation(
               parent: _animationController,
               curve: Interval(
-                (index / titles.length) * 0.5, // Stagger over first 50% of total duration
+                (index / titles.length) * 0.5,
+                // Stagger over first 50% of total duration
                 (index / titles.length) * 0.5 + 0.5, // End at different times
                 curve: Curves.easeOutCubic,
               ),
@@ -118,7 +132,8 @@ class _SliverListBldrState extends State<SliverListBldr>
     );
   }
 
-  Widget _ItemBookName(BuildContext context, String title, Color bookBackground) {
+  Widget _ItemBookName(BuildContext context, String title,
+      Color bookBackground) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: kBorderRadius),
@@ -130,29 +145,36 @@ class _SliverListBldrState extends State<SliverListBldr>
         child: Column(
           children: [
             Expanded(
-              flex: 7,
+              flex: 8,
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 2.0),
                 child: Center(
                   child: Text(
                     title,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineLarge,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .headlineLarge,
                   ),
                 ),
               ),
             ),
-            Divider(
+            const Divider(
               color: Colors.grey,
               thickness: 1,
             ),
             Expanded(
-              flex: 3,
+              flex: 2,
               child: Padding(
-                padding: EdgeInsets.all(2.0),
+                padding: EdgeInsets.only(left: 2.0, right: 2.0, bottom: 2.0,),
                 child: Center(
                   child: Text(
                     title,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .bodySmall,
                     textAlign: TextAlign.center,
                   ),
                 ),

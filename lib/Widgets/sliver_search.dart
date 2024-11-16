@@ -6,8 +6,8 @@ import '../constants.dart';
 
 class SliverSearch extends StatelessWidget {
   const SliverSearch({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,33 +36,33 @@ class SearchBar extends StatelessWidget {
         child: Container(
           margin: EdgeInsets.zero,
           width: MediaQuery.of(context).size.width,
-          height: 60,
+          height: 60.0,
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey),
             borderRadius: kBorderRadius / 2,
             color: Theme.of(context).scaffoldBackgroundColor,
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            padding:  EdgeInsets.symmetric(horizontal: 10.0),
             child: TextFormField(
               style: Theme.of(context).textTheme.titleMedium,
               textAlignVertical: TextAlignVertical.center,
-              decoration: const InputDecoration(
+              decoration:  InputDecoration(
                 contentPadding: EdgeInsets.only(top: 12.0),
-                enabledBorder: UnderlineInputBorder(
+                enabledBorder: const UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.transparent),
                 ),
-                focusedBorder: UnderlineInputBorder(
+                focusedBorder: const UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.transparent),
                 ),
                 prefixIcon: Padding(
                   padding: EdgeInsets.only(top: 12.0),
-                  child: Icon(
+                  child: const Icon(
                     Icons.search,
                     color: Colors.grey,
                   ),
                 ),
-                hintText: 'Restaurants or dish...',
+                hintText: 'بحث باسم الكتاب',
               ),
             ),
           ),

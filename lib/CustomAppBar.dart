@@ -7,7 +7,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? leading;
   final double elevation;
 
-  const CommonAppBar({
+   CommonAppBar({
     Key? key, // Optional key
     required this.title,//
     this.actions = const [],
