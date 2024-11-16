@@ -45,16 +45,36 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
-
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   late ScrollController _scrollController;
-  bool _showFAB = false;
+  late AnimationController _drawerController;
+  bool _showFAB = true;
+  bool _isDrawerOpen = false;
+  double _dragStartX = 0;
+  bool _isDragging = false;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
+
+    _drawerController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    );
+  }
+
+  void toggleDrawer() {
+    if (_isDrawerOpen) {
+      _drawerController.reverse();
+    } else {
+      _drawerController.forward();
+    }
+    setState(() {
+      _isDrawerOpen = !_isDrawerOpen;
+    });
   }
 
   void _scrollListener() {
@@ -77,42 +97,155 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
+    _drawerController.dispose();
     super.dispose();
+  }
+  // Add this method to handle back button
+  Future<bool> _onWillPop() async {
+    if (_isDrawerOpen) {
+      toggleDrawer();
+      return false; // Don't exit the app
+    }
+    return true; // Allow app exit
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final isRTL = Directionality.of(context) == TextDirection.rtl;
+
+    return PopScope(  // Using PopScope instead of WillPopScope
+        canPop: !_isDrawerOpen,  // Only allow pop when drawer is closed
+        onPopInvoked: (didPop) {
+          if (!didPop) {
+            toggleDrawer();
+          }
+        },
+        child: Scaffold(
+      appBar: CommonAppBar(
+        title: 'حافظ المتون',
+        backgroundColor: Colors.yellow,
+        elevation: 20,
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          onPressed: toggleDrawer,
+        ),
+      ),
       body: Stack(
         children: [
-          CustomScrollView(
-            controller: _scrollController,
-            slivers: [
-              const SliverAppBarBldr(),
-              const SliverSearch(),
-              SliverListBldr(),
-            ],
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: CommonAppBar(
-              title: 'حافظ المتون',
-              backgroundColor: Colors.yellow.withOpacity(0.6),
-              elevation: 20,
-              leading: IconButton(
-                icon: Icon(Icons.menu),
-                onPressed: () {},
-              ),
+          // The main content
+          GestureDetector(
+            onHorizontalDragStart: (details) {
+              _dragStartX = details.globalPosition.dx;
+              _isDragging = true;
+            },
+            onHorizontalDragUpdate: (details) {
+              if (!_isDragging) return;
+
+              final currentX = details.globalPosition.dx;
+              final dragDistance = currentX - _dragStartX;
+              final screenWidth = MediaQuery.of(context).size.width;
+
+              if (isRTL) {
+                // For RTL: check right edge drag
+                if (_dragStartX > (screenWidth - 60) && dragDistance < -50 && !_isDrawerOpen) {
+                  _isDragging = false;
+                  toggleDrawer();
+                } else if (_isDrawerOpen && dragDistance > 50) {
+                  _isDragging = false;
+                  toggleDrawer();
+                }
+              } else {
+                // For LTR: check left edge drag
+                if (_dragStartX < 60 && dragDistance > 50 && !_isDrawerOpen) {
+                  _isDragging = false;
+                  toggleDrawer();
+                } else if (_isDrawerOpen && dragDistance < -50) {
+                  _isDragging = false;
+                  toggleDrawer();
+                }
+              }
+            },
+            onHorizontalDragEnd: (details) {
+              _isDragging = false;
+            },
+            child: CustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                const SliverAppBarBldr(),
+                const SliverSearch(),
+                SliverListBldr(),
+              ],
             ),
+          ),
+
+          // The Drawer
+          AnimatedBuilder(
+            animation: _drawerController,
+            builder: (context, child) {
+              final double drawerWidth = 250.0;
+              double translateX;
+
+              if (isRTL) {
+                // RTL translation
+                translateX = (1.0 - _drawerController.value) * drawerWidth;
+              } else {
+                // LTR translation
+                translateX = (_drawerController.value - 1.0) * drawerWidth;
+              }
+
+              return Transform(
+                transform: Matrix4.identity()
+                  ..translate(translateX),
+                child: Align(
+                  alignment: isRTL ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Container(
+                    width: drawerWidth,
+                    color: Theme.of(context).canvasColor,
+                    child: ListView(
+                      padding: EdgeInsets.zero,
+                      children: [
+                        DrawerHeader(
+                          decoration: BoxDecoration(
+                            color: Colors.yellow,
+                          ),
+                          child: Text(
+                            'Drawer Header',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 24,
+                            ),
+                          ),
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.message),
+                          title: Text('Messages'),
+                          onTap: () {
+                            toggleDrawer();
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.account_circle),
+                          title: Text('Profile'),
+                          onTap: () {
+                            toggleDrawer();
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.settings),
+                          title: Text('Settings'),
+                          onTap: () {
+                            toggleDrawer();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
-      // drawer: Opacity(
-      //     opacity: 0.7,
-      //     child: Container(width: 300,color: Colors.yellow,)//DrawerWidget(),
-      // ),
       floatingActionButton: AnimatedSlide(
         duration: Duration(milliseconds: 300),
         offset: _showFAB ? Offset.zero : Offset(0, 2),
@@ -126,115 +259,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-    );
+    ));
   }
-/*
-
-  Widget DrawerWidget(){
-    return Drawer(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topRight: Radius.circular(0))),
-        width: 260,
-        child: Container(
-          color: AppColors.c1Drawer,
-          child: ListView(padding: EdgeInsets.zero, children: [
-            _buildHeader(),
-            _buildFirstListTile(
-              'assets/images/ic_menu.svg',
-              'الأذكار',
-              AppColors.c4Actionbar,
-            ),
-            _buildListTile(
-              context,
-              'assets/images/baseline_settings_24.svg',
-              'الإعدادات',
-              AppColors.white,
-            ),
-            _buildListTile(
-              context,
-              'assets/images/baseline_error_24_white.svg',
-              'عن التطبيق',
-              AppColors.white,
-            ),
-          ]),
-        ));
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.only(left: 14, bottom: 14, top: 14, right: 14),
-      decoration: BoxDecoration(color: AppColors.c4Actionbar),
-      child: const Text(
-        "ۛ ּڝــحۡــۑْۧــحۡ اﻷذڪــٰٱڕ",
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: 'typesetting',
-          color: Colors.white,
-          fontSize: 40,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFirstListTile(String asset, String title, Color textColor) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      child: ListTile(
-        leading: SvgPicture.asset(
-          asset,
-          width: 16.0,
-          height: 16.0,
-        ),
-        title: Text(title),
-        textColor: textColor,
-        onTap: () {
-          //   Handle onTap
-        },
-      ),
-    );
-  }
-  Widget _buildListTile(
-      BuildContext context, String asset, String title, Color textColor) {
-    return ListTile(
-      leading: SvgPicture.asset(
-        asset,
-        width: 24.0,
-        height: 24.0,
-      ),
-      title: Text(title),
-      textColor: textColor,
-      onTap: () {
-        if (Scaffold.of(context).isDrawerOpen) {
-          Navigator.of(context).pop();
-        }
-        switch (title) {
-          case 'الإعدادات':
-            _gotoSettingPage(context);
-            break;
-          case 'عن التطبيق':
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => AboutScreen(),
-              ),
-            );
-            break;
-          default:
-          // Default code block
-        }
-      },
-    );
-  }
-
-  void _gotoSettingPage(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SettingScreen(),
-      ),
-    );
-  }*/
 }

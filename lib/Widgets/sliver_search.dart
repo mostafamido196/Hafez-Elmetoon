@@ -25,50 +25,38 @@ class SliverSearch extends StatelessWidget {
 
 class SearchBar extends StatelessWidget {
   const SearchBar({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: kPadding,
-      child: Container(
-        margin: EdgeInsets.zero,
-        color: Colors.transparent,
-        child: Container(
-          margin: EdgeInsets.zero,
-          width: MediaQuery.of(context).size.width,
-          height: 60.0,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: kBorderRadius / 2,
-            color: Theme.of(context).scaffoldBackgroundColor,
-          ),
-          child: Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 10.0),
-            child: TextFormField(
-              style: Theme.of(context).textTheme.titleMedium,
-              textAlignVertical: TextAlignVertical.center,
-              decoration:  InputDecoration(
-                contentPadding: EdgeInsets.only(top: 12.0),
-                enabledBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
-                ),
-                focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
-                ),
-                prefixIcon: Padding(
-                  padding: EdgeInsets.only(top: 12.0),
-                  child: const Icon(
-                    Icons.search,
-                    color: Colors.grey,
-                  ),
-                ),
-                hintText: 'بحث باسم الكتاب',
+      padding: EdgeInsets.symmetric(vertical: 6,horizontal: 12),
+        child:Container(
+        width: MediaQuery.of(context).size.width,
+        height: 60.0,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular((kBorderRadius as BorderRadius).topLeft.x / 2,),
+          color: Theme.of(context).scaffoldBackgroundColor,
+        ),
+        child: Center(
+          child: TextFormField(
+            style: Theme.of(context).textTheme.titleMedium,
+            decoration: InputDecoration(
+              border: InputBorder.none, // Remove default border
+              isDense: true, // Reduces the internal padding
+              contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              prefixIcon: Icon(
+                Icons.search,
+                color: Colors.grey,
+                size: 24.0,
+              ),
+              hintText: 'بحث باسم الكتاب',
+              hintStyle: TextStyle(
+                color: Colors.grey,
               ),
             ),
           ),
         ),
-      ),
-    );
+      ));
   }
 }
 

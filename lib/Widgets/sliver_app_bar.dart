@@ -9,10 +9,10 @@ class SliverAppBarBldr extends StatelessWidget {
     return SliverAppBar(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       elevation: 0,
-      pinned: true,
+      pinned: false,
       centerTitle: false,
       stretch: true,
-      expandedHeight: 300.0,
+      expandedHeight: 200.0,
       flexibleSpace: FlexibleSpaceBar(
         stretchModes: [StretchMode.zoomBackground],
         background: Stack(
@@ -20,7 +20,7 @@ class SliverAppBarBldr extends StatelessWidget {
           children: [
             // Background image
             Container(
-              // margin: EdgeInsets.only(right: 16.0,left: 16.0,top: 64.0,),  // Adjust the margin as needed
+              margin: EdgeInsets.all(4,),  // Adjust the margin as needed
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(32.0),  // Adjust the radius as needed
                 image: DecorationImage(
