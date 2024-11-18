@@ -8,7 +8,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_riverpod: ^2.4.9  # Use the latest version
+
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^2.4.9
 
 
 
