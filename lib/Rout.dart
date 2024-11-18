@@ -1,34 +1,38 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hafez_elmetoon/SecondScreen.dart';
+import 'package:go_router/go_router.dart';
 
 import 'main.dart';
 
-class RouteNames {
-  static const String home = '/home';
-  static const String second = '/details';
+enum AppRoutes {
+  home(name: 'home', path: '/home'),
+  second(name: 'second', path: '/second/:title'); // Using ':title' parameter
+
+  const AppRoutes({required this.name, required this.path});
+
+  final String name;
+  final String path;
 }
 
-class AppRoutes {
-  static Route<dynamic> generateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case RouteNames.home:
-        return MaterialPageRoute(builder: (_) => HomeScreen());
-
-      case RouteNames.second:
-        final args = settings.arguments as SecondScreen;
-        return MaterialPageRoute(
-                builder: (_) => SecondScreen(title: args.title),
-        );
-
-      default:
-        return MaterialPageRoute(
-                builder: (_) => Scaffold(
-              body: Center(
-              child: Text('No route defined for ${settings.name}'),
-            ),
-          ),
-        );
-    }
-  }
+class AppRouter {
+  static final router = GoRouter(
+    initialLocation: AppRoutes.home.path,
+    routes: [
+      GoRoute(
+        name: AppRoutes.home.name,
+        path: AppRoutes.home.path,
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        name: AppRoutes.second.name,
+        path: AppRoutes.second.path,
+        builder: (context, state) {
+          // Use 'title' instead of 'message' to match the path parameter
+          final String title = state.pathParameters['title'] ?? '';
+          return SecondScreen(title: title);
+        },
+      ),
+    ],
+  );
 }

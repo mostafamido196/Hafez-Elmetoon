@@ -9,6 +9,8 @@ import 'Widgets/drawer.dart';
 import 'Widgets/sliver_app_bar.dart';
 import 'Widgets/sliver_list.dart';
 import 'Widgets/sliver_search.dart';
+import 'package:go_router/go_router.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -16,7 +18,7 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'حافظ المتون',
       debugShowCheckedModeBanner: false,
           theme: ThemeData(
@@ -40,8 +42,10 @@ class MyApp extends StatelessWidget {
         Locale('ar', ''), // Arabic
       ],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      home: const HomeScreen(), // Set your initial screen directly here
-      onGenerateRoute: AppRoutes.generateRoute,
+
+      routeInformationParser: AppRouter.router.routeInformationParser,
+      routerDelegate: AppRouter.router.routerDelegate,
+      routeInformationProvider: AppRouter.router.routeInformationProvider,
     );
   }
 }
@@ -249,10 +253,10 @@ class _HomeScreenState extends State<HomeScreen>
     if (_isDrawerOpen) {
       toggleDrawer();
     }
-    Navigator.pushNamed(
-      context,
-      RouteNames.second,
-      arguments: SecondScreen(title: 'Second Title'),
+    _scrollToTop();
+    GoRouter.of(context).pushNamed(
+      AppRoutes.second.name,
+      pathParameters: {'title': 'Hello from Home!'},  // passing the parameter
     );
   }
 }
