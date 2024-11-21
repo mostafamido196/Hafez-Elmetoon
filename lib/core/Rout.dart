@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hafez_elmetoon/SecondScreen.dart';
+import 'package:hafez_elmetoon/features/addAudio/AddAudioScreen.dart';
 import 'package:go_router/go_router.dart';
 
-import 'main.dart';
+import '../features/home/HomeScreen.dart';
+import '../main.dart';
 
 enum AppRoutes {
   home(name: 'home', path: '/home'),
@@ -30,7 +31,7 @@ class AppRouter {
         builder: (context, state) {
           // Use 'title' instead of 'message' to match the path parameter
           final String title = state.pathParameters['title'] ?? '';
-          return SecondScreen(title: title);
+          return AddAudioScreen(title: title);
         },
       ),
     ],
