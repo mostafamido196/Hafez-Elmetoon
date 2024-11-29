@@ -216,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen>
     }
     _scrollToTop();
     GoRouter.of(context).pushNamed(
-      AppRoutes.second.name,
+      AppRoutes.addAudio.name,
       pathParameters: {'title': 'Hello from Home!'},  // passing the parameter
     );
   }

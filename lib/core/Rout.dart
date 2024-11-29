@@ -8,7 +8,8 @@ import '../main.dart';
 
 enum AppRoutes {
   home(name: 'home', path: '/home'),
-  second(name: 'second', path: '/second/:title'); // Using ':title' parameter
+  addAudio(name: 'addAudio', path: '/second/:title'); // Using ':title' parameter
+
 
   const AppRoutes({required this.name, required this.path});
 
@@ -26,14 +27,16 @@ class AppRouter {
         builder: (context, state) => const HomeScreen(),
       ),
       GoRoute(
-        name: AppRoutes.second.name,
-        path: AppRoutes.second.path,
+        name: AppRoutes.addAudio.name,
+        path: AppRoutes.addAudio.path,
         builder: (context, state) {
           // Use 'title' instead of 'message' to match the path parameter
           final String title = state.pathParameters['title'] ?? '';
           return AddAudioScreen(title: title);
         },
       ),
+
     ],
   );
 }
+

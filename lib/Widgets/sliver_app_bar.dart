@@ -24,7 +24,7 @@ class SliverAppBarBldr extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(32.0),  // Adjust the radius as needed
                 image: DecorationImage(
-                  image: AssetImage('assets/images/yellow.jpeg'),
+                  image: AssetImage('assets/Images/yellow.jpeg'),
                   fit: BoxFit.cover,
                 ),
               ),

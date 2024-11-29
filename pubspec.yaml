@@ -14,9 +14,12 @@ dependencies:
   flutter_riverpod: ^2.4.9
   go_router: ^14.6.0
   flutter_svg: ^2.0.15
-
-
   cupertino_icons: ^1.0.8
+
+
+  file_picker: ^5.0.0 # For selecting files from external storage
+  path_provider: ^2.0.12 # For getting file paths
+  audioplayers: ^6.1.0
 
 dev_dependencies:
   flutter_test:
@@ -27,7 +30,7 @@ flutter:
 
   uses-material-design: true
   assets:
-    - assets/images/
+    - assets/Images/
 
 
 

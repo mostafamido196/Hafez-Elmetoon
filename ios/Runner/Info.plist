@@ -45,5 +45,22 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+		<key>UIBackgroundModes</key>
+    	<array>
+    		<string>audio</string>
+    	</array>
+    	<key>NSAppTransportSecurity</key>
+    	<dict>
+    		<key>NSAllowsArbitraryLoads</key>
+    		<true/>
+    	</dict>
+
+	<key>NSAppleMusicUsageDescription</key>
+	<string>$(PROJECT_NAME) requires access to media library</string>
+
+
+
+
 </dict>
 </plist>
