@@ -4,12 +4,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/AppTextStyle.dart';
 import 'Widgets/CustomAppBar.dart';
 import 'core/Rout.dart';
-import 'features/addAudio/AddAudioScreen.dart';
-import 'Widgets/drawer.dart';
-import 'Widgets/sliver_app_bar.dart';
-import 'Widgets/sliver_list.dart';
-import 'Widgets/sliver_search.dart';
-import 'package:go_router/go_router.dart';
 
 void main() {
   runApp(MyApp());

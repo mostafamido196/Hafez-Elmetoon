@@ -19,7 +19,7 @@ enum AppRoutes {
 
 class AppRouter {
   static final router = GoRouter(
-    initialLocation: AppRoutes.home.path,
+    initialLocation: AppRoutes.addAudio.path,
     routes: [
       GoRoute(
         name: AppRoutes.home.name,

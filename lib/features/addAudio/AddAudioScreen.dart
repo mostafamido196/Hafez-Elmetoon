@@ -17,26 +17,63 @@ class AddAudioScreen extends StatefulWidget {
 
 class _AddAudioScreenState extends State<AddAudioScreen> {
   final List<AudioItem> audioList = [
-    // AudioItem(
-    //     title: 'Recording 1', date: '2024-11-20', path: '/storage/audio1.mp3'),
-    // AudioItem(
-    //     title: 'Meeting Notes',
-    //     date: '2024-11-19',
-    //     path: '/storage/audio2.mp3'),
-    // AudioItem(
-    //     title: 'Lecture', date: '2024-11-18', path: '/storage/audio3.mp3'),
+    AudioItem(
+        title: 'البسملة.mp3',
+        date: '2024-11-20',
+        path:
+            '/data/user/0/com.samy.hafez_elmetoon/cache/file_picker/البسملة.mp3'),
   ];
 
   final AudioPlayer _audioPlayer = AudioPlayer();
 
-  void _playAudio(String path) async {
+
+  Future<void> _playAudio(String path, int repeat) async {
     print('play audio path; $path');
-    try {
-      await _audioPlayer.stop(); // Stop any currently playing audio
-      await _audioPlayer.play(DeviceFileSource(path)); // Play new audio
-    } catch (e) {
-      print("Error playing audio: $e");
+    for (int i = 0; i < repeat; i++) {
+      try {
+        await _audioPlayer.stop(); // Stop any currently playing audio
+        await _audioPlayer.play(DeviceFileSource(path)); // Start new audio
+        await _audioPlayer.onPlayerComplete.first; // Wait for audio to finish
+    }  catch (e) {
+        print("Error playing audio: $e");
+      }
     }
+  }
+
+
+
+  int selectedNumber = 1;
+
+  Future<void> showNumberPicker(String path) async {
+    final result = await showDialog<int>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Pick a number'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(
+                10,
+                (index) => ListTile(
+                  title: Text((index + 1).toString()),
+                  onTap: () {
+                    _playAudio(path, index + 1);
+                    Navigator.of(context).pop(index + 1);
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    // if (result != null) {
+    //   setState(() {
+    //     selectedNumber = result;
+    //   });
+    // }
   }
 
   @override
@@ -99,73 +136,85 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
               color: Colors.grey,
               thickness: 2,
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: audioList.length,
-                itemBuilder: (context, index) {
-                  final item = audioList[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: InkWell(
-                        onTap: () => _playAudio(audioList[index].path),
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          elevation: 4,
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.all(16.0),
-                            leading: CircleAvatar(
-                              radius: 30,
-                              backgroundColor: Colors.teal.withOpacity(0.2),
-                              child: const Icon(
-                                Icons.music_note,
-                                color: Colors.teal,
-                                size: 30,
-                              ),
-                            ),
-                            title: Text(
-                              item.title,
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Date: ${item.date}',
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.grey[600]),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Path: ${item.path}',
-                                  style: TextStyle(
-                                      fontSize: 12, color: Colors.grey[500]),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.play_arrow,
-                                  color: Colors.teal),
-                              onPressed: () {
-                                // Add logic to play the audio file
-                              },
-                            ),
-                            onLongPress: () {
-                              _showDeleteDialog(context, index);
-                            },
-                          ),
-                        )),
-                  );
-                },
-              ),
-            ),
+            _AudioListWidget(),
           ],
         ));
+  }
+
+  Widget _AudioListWidget() {
+    return Expanded(
+        child: ListView.builder(
+      itemCount: audioList.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: GestureDetector(
+              onTap: () => showNumberPicker(audioList[index].path),
+              child: _ItemAudioList(context, index)),
+        );
+      },
+    ));
+  }
+
+  Widget _ItemAudioList(BuildContext context, int index) {
+    final item = audioList[index];
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      elevation: 4,
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16.0),
+        leading: CircleAvatar(
+          radius: 30,
+          backgroundColor: Colors.teal.withOpacity(0.2),
+          child: const Icon(
+            Icons.music_note,
+            color: Colors.teal,
+            size: 30,
+          ),
+        ),
+        title: GestureDetector(
+            onTap: () => showNumberPicker(audioList[index].path),
+            child: Text(
+              item.title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            )),
+        subtitle: GestureDetector(
+            onTap: () => showNumberPicker(audioList[index].path),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+                Text(
+                  'Date: ${item.date}',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Path: ${item.path}',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            )),
+        trailing: GestureDetector(
+            onTap: () => showNumberPicker(audioList[index].path),
+            child: IconButton(
+              icon: GestureDetector(
+                  onTap: () => showNumberPicker(audioList[index].path),
+                  child: const Icon(Icons.play_arrow, color: Colors.teal)),
+              onPressed: () {
+                // Move the play logic to here if you want the icon button to trigger audio
+                print('play audio from trailing IconButton');
+                showNumberPicker(audioList[index].path);
+              },
+            )),
+        onLongPress: () {
+          _showDeleteDialog(context, index);
+        },
+      ),
+    );
   }
 
   void _showDeleteDialog(BuildContext context, int index) {
@@ -208,11 +257,19 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
 
     if (result != null) {
       final file = result.files.single;
+      final date = DateTime.now().year.toString() +
+          ' / ' +
+          DateTime.now().month.toString() +
+          ' / ' +
+          DateTime.now().day.toString();
+      print('_pickAudioFile name: ${file.name}');
+      print('_pickAudioFile path: ${file.path}');
+      print('_pickAudioFile data: $date');
       setState(() {
         audioList.add(AudioItem(
           title: file.name,
           path: file.path!,
-          date: DateTime.now().year.toString()+ DateTime.now().month.toString()+ DateTime.now().day.toString(),
+          date: date,
         ));
       });
     }
