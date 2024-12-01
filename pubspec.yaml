@@ -15,6 +15,7 @@ dependencies:
   go_router: ^14.6.0
   flutter_svg: ^2.0.15
   cupertino_icons: ^1.0.8
+  numberpicker: ^2.1.2
 
 
   file_picker: ^5.0.0 # For selecting files from external storage

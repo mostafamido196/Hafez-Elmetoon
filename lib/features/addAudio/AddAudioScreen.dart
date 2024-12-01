@@ -1,9 +1,8 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-
-import '../../core/Rout.dart';
+import 'package:hafez_elmetoon/Widgets/addAudio/addAudioWidget.dart';
+import 'package:numberpicker/numberpicker.dart';
 import 'AudioItem.dart';
 
 class AddAudioScreen extends StatefulWidget {
@@ -18,14 +17,24 @@ class AddAudioScreen extends StatefulWidget {
 class _AddAudioScreenState extends State<AddAudioScreen> {
   final List<AudioItem> audioList = [
     AudioItem(
-        title: 'البسملة.mp3',
+        title: 'كريمٌ منعمٌ برٌ لطيف',
         date: '2024-11-20',
         path:
-            '/data/user/0/com.samy.hafez_elmetoon/cache/file_picker/البسملة.mp3'),
+            '/data/user/0/com.samy.hafez_elmetoon/cache/file_picker/نغمة كريم منعم بر لطيف.mp3'),
   ];
 
   final AudioPlayer _audioPlayer = AudioPlayer();
-
+  void addAudio(PlatformFile file){
+    print('mos samy file: ${file.name}');
+    final date = DateTime.now().year.toString() + ' / ' + DateTime.now().month.toString() + ' / ' + DateTime.now().day.toString();
+    setState(() {
+      audioList.add(AudioItem(
+        title: file.name,
+        path: file.path!,
+        date: date,
+      ));
+    });
+  }
 
   Future<void> _playAudio(String path, int repeat) async {
     print('play audio path; $path');
@@ -40,41 +49,53 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
     }
   }
 
+  int _selectedNumberOfRepeating = 1;
 
-
-  int selectedNumber = 1;
-
-  Future<void> showNumberPicker(String path) async {
+  Future<void> showNumberPicker(BuildContext context, String path) async {
     final result = await showDialog<int>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Pick a number'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(
-                10,
-                (index) => ListTile(
-                  title: Text((index + 1).toString()),
-                  onTap: () {
-                    _playAudio(path, index + 1);
-                    Navigator.of(context).pop(index + 1);
-                  },
-                ),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Pick a number'),
+              content: NumberPicker(
+                value: _selectedNumberOfRepeating,
+                minValue: 1,
+                maxValue: 10,
+                // axis: Axis.horizontal,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedNumberOfRepeating = value; // Update value dynamically
+                  });
+                },
               ),
-            ),
-          ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(), // Close without selection
+                  child: const Text('الغاء'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    _playAudio(path, _selectedNumberOfRepeating);
+                    Navigator.of(context).pop(
+                        _selectedNumberOfRepeating); // Return selected number
+                  },
+                  child: const Text('تشغيل'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
 
-    // if (result != null) {
-    //   setState(() {
-    //     selectedNumber = result;
-    //   });
-    // }
+    if (result != null) {
+      print('Selected number: $result');
+      // Perform actions with the selected number
+    }
   }
+
 
   @override
   void dispose() {
@@ -90,48 +111,7 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
         ),
         body: Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/Images/record2.png',
-                        // Replace with your image path
-                        height: 80, // Set appropriate size
-                        width: 80,
-                      ),
-                      SizedBox(height: 8), // Spacing between image and text
-                      Text(
-                        'تسجيل مقطع',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: InkWell(
-                      onTap: _pickAudioFile,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/Images/upload.webp',
-                            // Replace with your image path
-                            height: 80,
-                            width: 80,
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'من الهاتف',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ],
-                      )),
-                ),
-              ],
-            ),
+            AddAudioWidget(addAudio),
             const Divider(
               color: Colors.grey,
               thickness: 2,
@@ -141,6 +121,7 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
         ));
   }
 
+
   Widget _AudioListWidget() {
     return Expanded(
         child: ListView.builder(
@@ -149,7 +130,7 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: GestureDetector(
-              onTap: () => showNumberPicker(audioList[index].path),
+              onTap: () => showNumberPicker(context,audioList[index].path),
               child: _ItemAudioList(context, index)),
         );
       },
@@ -175,13 +156,13 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
           ),
         ),
         title: GestureDetector(
-            onTap: () => showNumberPicker(audioList[index].path),
+            onTap: () => showNumberPicker(context,audioList[index].path),
             child: Text(
               item.title,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             )),
         subtitle: GestureDetector(
-            onTap: () => showNumberPicker(audioList[index].path),
+            onTap: () => showNumberPicker(context,audioList[index].path),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -199,15 +180,14 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
               ],
             )),
         trailing: GestureDetector(
-            onTap: () => showNumberPicker(audioList[index].path),
+            onTap: () => showNumberPicker(context,audioList[index].path),
             child: IconButton(
               icon: GestureDetector(
-                  onTap: () => showNumberPicker(audioList[index].path),
+                  onTap: () => showNumberPicker(context,audioList[index].path),
                   child: const Icon(Icons.play_arrow, color: Colors.teal)),
               onPressed: () {
-                // Move the play logic to here if you want the icon button to trigger audio
                 print('play audio from trailing IconButton');
-                showNumberPicker(audioList[index].path);
+                showNumberPicker(context,audioList[index].path);
               },
             )),
         onLongPress: () {
@@ -250,28 +230,4 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
     );
   }
 
-  Future<void> _pickAudioFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.audio,
-    );
-
-    if (result != null) {
-      final file = result.files.single;
-      final date = DateTime.now().year.toString() +
-          ' / ' +
-          DateTime.now().month.toString() +
-          ' / ' +
-          DateTime.now().day.toString();
-      print('_pickAudioFile name: ${file.name}');
-      print('_pickAudioFile path: ${file.path}');
-      print('_pickAudioFile data: $date');
-      setState(() {
-        audioList.add(AudioItem(
-          title: file.name,
-          path: file.path!,
-          date: date,
-        ));
-      });
-    }
-  }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../core/constants.dart';
+import '../../core/constants.dart';
 
 class SliverListBldr extends StatefulWidget {
   SliverListBldr({Key? key}) : super(key: key);

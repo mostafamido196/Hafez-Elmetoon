@@ -2,11 +2,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../Widgets/CustomAppBar.dart';
-import '../../Widgets/drawer.dart';
-import '../../Widgets/sliver_app_bar.dart';
-import '../../Widgets/sliver_list.dart';
-import '../../Widgets/sliver_search.dart';
+import '../../core/CustomAppBar.dart';
+import '../../Widgets/home/drawer.dart';
+import '../../Widgets/home/sliver_app_bar.dart';
+import '../../Widgets/home/sliver_list.dart';
+import '../../Widgets/home/sliver_search.dart';
 import '../../core/Rout.dart';
 import 'package:go_router/go_router.dart';
 
