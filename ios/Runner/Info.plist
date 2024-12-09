@@ -59,7 +59,8 @@
 	<key>NSAppleMusicUsageDescription</key>
 	<string>$(PROJECT_NAME) requires access to media library</string>
 
-
+<key>NSMicrophoneUsageDescription</key>
+<string>Some message to describe why you need this permission</string>
 
 
 </dict>

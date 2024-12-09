@@ -18,9 +18,11 @@ dependencies:
   numberpicker: ^2.1.2
 
 
+
   file_picker: ^5.0.0 # For selecting files from external storage
   path_provider: ^2.0.12 # For getting file paths
   audioplayers: ^6.1.0
+  record: ^5.2.0
 
 dev_dependencies:
   flutter_test:
