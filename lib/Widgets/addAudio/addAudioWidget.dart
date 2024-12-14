@@ -6,13 +6,16 @@ import 'addAudioFromRecording.dart';
 
 class AddAudioWidget extends StatelessWidget {
   final Function(PlatformFile file) onAdd;
-  const AddAudioWidget(this.onAdd, {super.key});
+  final bool isRecording;
+  final Future<void> Function() onRecord;
+  final Future<void> Function() onStop;
+  const AddAudioWidget(this.onAdd,this.isRecording, this.onRecord,this.onStop, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        AddAudioFromRecording(),
+        AddAudioFromRecording(isRecording,onRecord,onStop),
         AddAudioFromFiles(onAdd),
       ],
     );  }

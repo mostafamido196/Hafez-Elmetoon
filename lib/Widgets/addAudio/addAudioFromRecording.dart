@@ -1,17 +1,37 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class AddAudioFromRecording extends StatelessWidget {
-  const AddAudioFromRecording({super.key});
+  final bool isRecording;
+  final Future<void> Function() onRecord;
+  final Future<void> Function() onStop;
+
+  const AddAudioFromRecording(this.isRecording, this.onRecord, this.onStop,
+      {super.key});
 
   @override
   Widget build(BuildContext context) {
+    print('mos samy isRecording: $isRecording');
     return Expanded(
+        child: InkWell(
+      onTap: () async {
+        try {
+          if (isRecording)
+            await onStop();
+          else {
+            await onRecord();
+          }
+        } catch (e) {
+          print("Error starting recording: $e");
+        }
+      },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
-            'assets/Images/record2.png',
-            // Replace with your image path
+          SvgPicture.asset(
+            isRecording
+                ? 'assets/Images/stop_recording.svg'
+                : 'assets/Images/start_recording.svg',
             height: 80, // Set appropriate size
             width: 80,
           ),
@@ -22,6 +42,6 @@ class AddAudioFromRecording extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }

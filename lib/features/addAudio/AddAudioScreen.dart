@@ -1,13 +1,15 @@
 import 'package:audioplayers/audioplayers.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:hafez_elmetoon/Widgets/addAudio/addAudioWidget.dart';
-import '../../Widgets/addAudio/audioList.dart';
-import 'AudioItem.dart';
-import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart' as ja;
 import 'package:record/record.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'package:path/path.dart' as p;
+
+import 'package:file_picker/file_picker.dart';
+import 'package:hafez_elmetoon/Widgets/addAudio/addAudioWidget.dart';
+import '../../Widgets/addAudio/audioList.dart';
+import 'AudioItem.dart';
 
 class AddAudioScreen extends StatefulWidget {
   final String title;
@@ -28,18 +30,26 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
   ];
   final AudioPlayer _audioPlayer = AudioPlayer();
   int playingIndex = -1; // initial not working
-
-///recording
-
-
+  final _audioRecorder = AudioRecorder();
+  bool isRecording = false, isPlaying = false;
 
 
-
-
-  ///
-
-
-  void addAudio(PlatformFile file) {
+  Future<void> startRecording() async {
+    if (await _audioRecorder.hasPermission()) {
+      final Directory appDocumentsDir =
+      await getApplicationDocumentsDirectory();
+      final String filePath =
+      p.join(appDocumentsDir.path, "recording.wav");
+      await _audioRecorder.start(
+        const RecordConfig(),
+        path: filePath,
+      );
+      setState(() {
+        isRecording = true;
+      });
+    }
+  }
+  void addAudioFromFiles(PlatformFile file) {
     print('mos samy file: ${file.name}');
     final date = DateTime.now().year.toString() +
         ' / ' +
@@ -53,6 +63,16 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
         date: date,
       ));
     });
+  }
+
+  Future<void> stopRecording() async {
+    String? filePath = await _audioRecorder.stop();
+    if (filePath != null) {
+      setState(() {
+        isRecording = false;
+        audioList.add(AudioItem(title: 'record title', date: 'Date.now', path: filePath));
+      });
+    }
   }
 
   Future<void> onAudioPlay(int index, String path, int repeat) async {
@@ -83,7 +103,7 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
   @override
   void dispose() {
     _audioPlayer.dispose(); // Dispose of the player when the widget is removed
-    _recorder.dispose();
+    _audioRecorder.dispose();
     super.dispose();
   }
 
@@ -95,7 +115,8 @@ class _AddAudioScreenState extends State<AddAudioScreen> {
         ),
         body: Column(
           children: [
-            AddAudioWidget(addAudio),
+            AddAudioWidget(addAudioFromFiles, isRecording, startRecording,
+                stopRecording),
             const Divider(
               color: Colors.grey,
               thickness: 2,

@@ -20,9 +20,14 @@ dependencies:
 
 
   file_picker: ^5.0.0 # For selecting files from external storage
-  path_provider: ^2.0.12 # For getting file paths
+  path_provider: ^2.1.3 # For getting file paths
   audioplayers: ^6.1.0
-  record: ^5.2.0
+  permission_handler: ^11.1.0
+
+
+  record: ^5.0.5
+  just_audio: ^0.9.38
+  path: ^1.9.0
 
 dev_dependencies:
   flutter_test:

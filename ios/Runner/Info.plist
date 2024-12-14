@@ -60,8 +60,8 @@
 	<string>$(PROJECT_NAME) requires access to media library</string>
 
 <key>NSMicrophoneUsageDescription</key>
-<string>Some message to describe why you need this permission</string>
-
-
+<string>This app needs microphone access to record audio</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>This app needs file access to manage audio files</string>
 </dict>
 </plist>
