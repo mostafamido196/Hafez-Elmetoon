@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hafez_elmetoon/features/addAudio/AddAudioScreen.dart';
 import 'package:go_router/go_router.dart';
 
-import '../features/home/HomeScreen.dart';
-import '../main.dart';
+import '../screens/addAudio/AddAudioScreen.dart';
+import '../screens/home/HomeScreen.dart';
 
 enum AppRoutes {
   home(name: 'home', path: '/home'),

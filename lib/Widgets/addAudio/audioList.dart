@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hafez_elmetoon/Widgets/addAudio/ItemAudioList.dart';
 import 'package:hafez_elmetoon/Widgets/addAudio/repeatePopup.dart';
 
-import '../../features/addAudio/AudioItem.dart';
+import '../../screens/addAudio/AudioItem.dart';
+
 
 class AudioList extends StatelessWidget {
   final List<AudioItem> audioList;

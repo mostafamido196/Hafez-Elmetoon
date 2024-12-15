@@ -2,7 +2,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../features/addAudio/AudioItem.dart';
 
 class AddAudioFromFiles extends StatelessWidget {
   final Function(PlatformFile file) onAdd;

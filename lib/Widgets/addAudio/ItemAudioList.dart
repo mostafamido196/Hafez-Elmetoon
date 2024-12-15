@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hafez_elmetoon/Widgets/addAudio/repeatePopup.dart';
-import 'package:hafez_elmetoon/features/addAudio/AudioItem.dart';
 
+
+import '../../screens/addAudio/AudioItem.dart';
 import 'deletePopup.dart';
 
 class ItemAudioList extends StatelessWidget {
