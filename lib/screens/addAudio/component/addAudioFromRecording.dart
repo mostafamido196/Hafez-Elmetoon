@@ -11,7 +11,6 @@ class AddAudioFromRecording extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('mos samy isRecording: $isRecording');
     return Expanded(
         child: InkWell(
       onTap: () async {

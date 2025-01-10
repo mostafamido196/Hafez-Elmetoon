@@ -1,10 +1,13 @@
+import 'package:file_picker/src/platform_file.dart';
 import 'package:flutter/material.dart';
+import 'package:hafez_elmetoon/screens/addAudio/component/addAudioWidget.dart';
+import 'package:hafez_elmetoon/screens/addAudio/component/audioList.dart';
 import 'package:provider/provider.dart';
-import 'package:file_picker/file_picker.dart';
 
-import '../../managers/AudioManager.dart';
-import '../../Widgets/addAudio/addAudioWidget.dart';
-import '../../Widgets/addAudio/audioList.dart';
+import '../../core/UIState.dart';
+import '../Models/AudioItem.dart';
+import 'component/AudioListShimmer.dart';
+import 'AudioViewModel.dart';
 
 class AddAudioScreen extends StatelessWidget {
   final String title;
@@ -13,35 +16,42 @@ class AddAudioScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<AudioManager>(
-      create: (context) => AudioManager(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('حافظ المتون'),
-        ),
-        body: Consumer<AudioManager>(
-          builder: (context, audioManager, child) => Column(
-            children: [
-
+    return ChangeNotifierProvider<AddAudioViewModel>(
+        create: (context) => AddAudioViewModel()..fetchData(),
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text('حافظ المتون'),
+          ),
+          body: Consumer<AddAudioViewModel>(builder: (context, viewModel, child) {
+            final state = viewModel.state;
+            print('mos samy state: $state');
+            return Column(children: [
               AddAudioWidget(
-                  audioManager.addAudioFromFiles,
-                  audioManager.isRecording,
-                  audioManager.startRecording,
-                  audioManager.stopRecording
-              ),
+                  viewModel.addAudioFromFiles,
+                  viewModel.isRecording,
+                  viewModel.startRecording,
+                  viewModel.stopRecording),
               const Divider(
                 color: Colors.grey,
                 thickness: 2,
               ),
-              AudioList(
-                  audioList: audioManager.audioList,
-                  onDelete: audioManager.onDeleteItem,
-                  onPlayAudio: audioManager.onAudioPlay
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+              AudioListState(state,viewModel)
+            ]);
+          }),
+        ));
+  }
+
+  Widget AudioListState(UIState state, AddAudioViewModel audioManager) {
+    if (state is Loading)
+     return Expanded(child: AudioListShimmer());
+    else if (state is Success<List<AudioItem>>)
+      return AudioList(
+          audioList: state.data,
+          onDelete: audioManager.onDeleteItem,
+          onPlayAudio: audioManager.onAudioPlay);
+    else if (state is Error)
+      return Center(child: Text("Error: ${state.errorMessage}"));
+    else
+      return Center(child: Text("Unknown State"));
   }
 }

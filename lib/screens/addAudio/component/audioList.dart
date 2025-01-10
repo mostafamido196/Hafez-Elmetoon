@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hafez_elmetoon/Widgets/addAudio/ItemAudioList.dart';
-import 'package:hafez_elmetoon/Widgets/addAudio/repeatePopup.dart';
+import 'package:hafez_elmetoon/screens/addAudio/component/repeatePopup.dart';
 
-import '../../screens/addAudio/AudioItem.dart';
+import '../../Models/AudioItem.dart';
+import 'ItemAudioList.dart';
 
 
 class AudioList extends StatelessWidget {
@@ -15,10 +15,11 @@ class AudioList extends StatelessWidget {
       {super.key,
       required this.audioList,
       required this.onPlayAudio,
-      required this.onDelete});
+      required this.onDelete}) ;
 
   @override
   Widget build(BuildContext context) {
+    print('audioList file audiolist lingth: ${audioList.length}');
     return Expanded(
         child: ListView.builder(
       itemCount: audioList.length,

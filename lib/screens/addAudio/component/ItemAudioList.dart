@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hafez_elmetoon/Widgets/addAudio/repeatePopup.dart';
+import 'package:hafez_elmetoon/screens/addAudio/component/repeatePopup.dart';
 
 
-import '../../screens/addAudio/AudioItem.dart';
+import '../../Models/AudioItem.dart';
 import 'deletePopup.dart';
 
 class ItemAudioList extends StatelessWidget {
@@ -81,7 +81,7 @@ class ItemAudioList extends StatelessWidget {
             )),
         onLongPress: () {
           showDeletePopup(
-              context: context, index: index, onDeleteItem: onDelete);
+              context: context, index: audioItem.id!, onDeleteItem: onDelete);
         },
       ),
     );

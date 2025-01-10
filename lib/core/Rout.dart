@@ -6,9 +6,8 @@ import '../screens/addAudio/AddAudioScreen.dart';
 import '../screens/home/HomeScreen.dart';
 
 enum AppRoutes {
-  home(name: 'home', path: '/home'),
-  addAudio(name: 'addAudio', path: '/second/:title'); // Using ':title' parameter
-
+  home(name: 'home', path: '/component'),
+  addAudio(name: 'addAudio', path: '/second/:title'); // Unique name for this route
 
   const AppRoutes({required this.name, required this.path});
 
