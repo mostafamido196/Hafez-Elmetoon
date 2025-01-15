@@ -12,15 +12,18 @@ import '../../data/repositories/AddAudioRepository.dart';
 import '../../domain/usecases/AddStringUseCase.dart';
 import '../../domain/usecases/DeleteStringUseCase.dart';
 import '../../domain/usecases/GetStringsUseCase.dart';
-import '../Models/AudioItem.dart';
+
 
 
 import 'package:path/path.dart' as p;
 
-class AddAudioViewModel extends ChangeNotifier {
-   GetCustomAudioUseCase? _getCustomAudioUseCase;
-   AddCustomAudioUseCase? _addCustomAudioUseCase;
-   DeleteCustomAudioUseCase? _deleteCustomAudioUseCase;
+import 'Models/AudioItem.dart';
+
+class PlayingAudioViewModel extends ChangeNotifier {
+  GetCustomAudioUseCase? _getCustomAudioUseCase;
+  AddCustomAudioUseCase? _addCustomAudioUseCase;
+  DeleteCustomAudioUseCase? _deleteCustomAudioUseCase;
+  // bool _isInitialized = false;
 
   UIState _state = Loading();
 
@@ -33,40 +36,45 @@ class AddAudioViewModel extends ChangeNotifier {
 
 
   Future<void> init() async {
+    // if (_isInitialized) return;
+
     final repository = await CustomAudioRepositoryImpl.create();
     _getCustomAudioUseCase = GetCustomAudioUseCase(repository);
     _addCustomAudioUseCase = AddCustomAudioUseCase(repository);
     _deleteCustomAudioUseCase = DeleteCustomAudioUseCase(repository);
 
     await fetchData();
+    // _isInitialized = true;
     notifyListeners();
   }
 
-   Future<void> fetchData() async {
+  Future<void> fetchData() async {
+    // if (!_isInitialized) throw StateError('ViewModel not initialized');
 
-     try {
-       _state = Loading();
-       notifyListeners();
+    try {
+      _state = Loading();
+      notifyListeners();
 
-       // Use non-null assertion since we've checked initialization
-       final audioListEntity = await _getCustomAudioUseCase!.execute();
-       final audioList = audioListEntity.map((it) => AudioItem(
-           id: it.id,
-           title: it.title,
-           date: it.date,
-           path: it.path
-       )).toList();
+      // Use non-null assertion since we've checked initialization
+      final audioListEntity = await _getCustomAudioUseCase!.execute();
+      final audioList = audioListEntity.map((it) => AudioItem(
+          id: it.id,
+          title: it.title,
+          date: it.date,
+          path: it.path
+      )).toList();
 
-       _state = Success(audioList);
-     } catch (e) {
-       print('Error: ${e.toString()}');
-       _state = Error(e.toString());
-     }
+      _state = Success(audioList);
+    } catch (e) {
+      print('Error: ${e.toString()}');
+      _state = Error(e.toString());
+    }
 
-     notifyListeners();
-   }
+    notifyListeners();
+  }
 
   Future<void> addAudioFromFiles(PlatformFile file) async {
+    // if (!_isInitialized) throw StateError('ViewModel not initialized');
     final date = DateTime.now().year.toString() +
         ' / ' +
         DateTime.now().month.toString() +
@@ -78,6 +86,7 @@ class AddAudioViewModel extends ChangeNotifier {
   }
 
   Future<void> onAudioPlay(int index, String path, int repeat) async {
+    // if (!_isInitialized) throw StateError('ViewModel not initialized');
     // Check if file exists
     if (!await File(path).exists()) {
       print('Error: File does not exist at path: $path');
@@ -98,9 +107,10 @@ class AddAudioViewModel extends ChangeNotifier {
   }
 
   Future<void> startRecording() async {
+    // if (!_isInitialized) throw StateError('ViewModel not initialized');
     if (await audioRecorder.hasPermission()) {
       final Directory appDocumentsDir =
-          await getApplicationDocumentsDirectory();
+      await getApplicationDocumentsDirectory();
       final String filePath = p.join(appDocumentsDir.path, "recording.wav");
       await audioRecorder.start(
         const RecordConfig(),
@@ -112,6 +122,7 @@ class AddAudioViewModel extends ChangeNotifier {
   }
 
   Future<void> stopRecording() async {
+    // if (!_isInitialized) throw StateError('ViewModel not initialized');
     String? filePath = await audioRecorder.stop();
     if (filePath != null) {
       await _addCustomAudioUseCase?.execute(AudioItem(
@@ -125,14 +136,17 @@ class AddAudioViewModel extends ChangeNotifier {
   }
 
   void stopAudio() async {
+    // if (!_isInitialized) throw StateError('ViewModel not initialized');
     await audioPlayer.stop();
     playingIndex = -1;
     notifyListeners();
   }
 
   Future<void> onDeleteItem(int index) async {
+    // if (!_isInitialized) throw StateError('ViewModel not initialized');
     if (index == this.playingIndex) await audioPlayer.stop();
     await _deleteCustomAudioUseCase?.execute(index);
     await fetchData();
   }
+
 }

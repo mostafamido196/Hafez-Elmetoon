@@ -1,4 +1,3 @@
-import 'package:file_picker/src/platform_file.dart';
 import 'package:flutter/material.dart';
 import 'package:hafez_elmetoon/screens/addAudio/component/addAudioWidget.dart';
 import 'package:hafez_elmetoon/screens/addAudio/component/audioList.dart';
@@ -17,33 +16,38 @@ class AddAudioScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AddAudioViewModel>(
-        create: (context) => AddAudioViewModel()..fetchData(),
+        create: (context) {
+          final viewModel = AddAudioViewModel();
+          viewModel.init();
+          return viewModel;
+        },
         child: Scaffold(
           appBar: AppBar(
             title: Text('حافظ المتون'),
           ),
-          body: Consumer<AddAudioViewModel>(builder: (context, viewModel, child) {
-            final state = viewModel.state;
-            print('mos samy state: $state');
-            return Column(children: [
-              AddAudioWidget(
-                  viewModel.addAudioFromFiles,
-                  viewModel.isRecording,
-                  viewModel.startRecording,
-                  viewModel.stopRecording),
-              const Divider(
-                color: Colors.grey,
-                thickness: 2,
-              ),
-              AudioListState(state,viewModel)
-            ]);
-          }),
+          body: Consumer<AddAudioViewModel>(
+              builder: (context, viewModel, child) {
+                final state = viewModel.state;
+                print('mos samy state: $state');
+                return Column(children: [
+                  AddAudioWidget(
+                      viewModel.addAudioFromFiles,
+                      viewModel.isRecording,
+                      viewModel.startRecording,
+                      viewModel.stopRecording),
+                  const Divider(
+                    color: Colors.grey,
+                    thickness: 2,
+                  ),
+                  AudioListState(state, viewModel)
+                ]);
+              }),
         ));
   }
 
   Widget AudioListState(UIState state, AddAudioViewModel audioManager) {
     if (state is Loading)
-     return Expanded(child: AudioListShimmer());
+      return Expanded(child: AudioListShimmer());
     else if (state is Success<List<AudioItem>>)
       return AudioList(
           audioList: state.data,

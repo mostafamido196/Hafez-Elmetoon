@@ -1,61 +1,66 @@
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'package:hafez_elmetoon/data/local/AudioSQLiteDB/AudioSqliteDB.dart';
 import '../../screens/Models/AudioItem.dart';
-import '../models/AudioItemDB.dart';
+import '../local/AudioFloorDB/LocalDB.dart';
+import '../local/AudioFloorDB/RecordDao.dart';
+import '../local/AudioFloorDB/Record.dart';
+import '../local/models/AudioModel.dart';
+
 
 abstract class CustomAudioRepository {
   Future<List<AudioEntity>> getAllCustomAudios();
+
   Future<void> addCustomAudio(AudioItem item);
+
   Future<void> deleteCustomAudio(int id);
 }
 class CustomAudioRepositoryImpl implements CustomAudioRepository {
-  static Database? _database;
+  RecordDao? _dao;
 
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await initDatabase();
-    return _database!;
+  CustomAudioRepositoryImpl._internal();
+
+  static Future<CustomAudioRepositoryImpl> create() async {
+    final repository = CustomAudioRepositoryImpl._internal();
+    await repository._initializeLocalDB();
+    return repository;
   }
 
-  Future<Database> initDatabase() async {
-    String path = join(await getDatabasesPath(), 'audio_database.db');
-    return await openDatabase(
-      path,
-      version: 1,
-      onCreate: (Database db, int version) async {
-        await db.execute('''
-          CREATE TABLE audio(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT,
-            path TEXT,
-            date TEXT
-          )
-        ''');
-      },
-    );
+  Future<void> _initializeLocalDB() async {
+    final localDB = await LocalDB.getInstance();
+    _dao = localDB.recordDao;
+  }
+
+
+  // Getter to ensure dao is initialized
+  Future<RecordDao> get dao async {
+    if (_dao == null) {
+      await _initializeLocalDB();
+    }
+    return _dao!;
   }
 
   @override
   Future<List<AudioEntity>> getAllCustomAudios() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('audio');
-    return List.generate(maps.length, (i) => StringItem.fromMap(maps[i]));
+    final recordDao = await dao;
+    return (await recordDao.getAllRecords())
+        .map((record) => AudioEntity(
+      id: record.id,
+      title: record.title,
+      date: record.date,
+      path: record.path,
+    ))
+        .toList();
   }
 
   @override
   Future<void> addCustomAudio(AudioItem entity) async {
-    final db = await database;
-    final item = StringItem.fromEntity(AudioEntity.AudioEntity( title: entity.title, path: entity.path, date: entity.date));
-    await db.insert('audio', item.toMap());
+    final recordDao = await dao;
+    await recordDao.insertRecord(
+        Record(title: entity.title, path: entity.path, date: entity.date));
   }
 
   @override
   Future<void> deleteCustomAudio(int id) async {
-    final db = await database;
-    await db.delete(
-      'audio',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    final recordDao = await dao;
+    await recordDao.deleteRecordById(id);
   }
 }

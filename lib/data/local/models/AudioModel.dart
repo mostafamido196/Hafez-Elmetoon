@@ -5,7 +5,7 @@ class AudioEntity {
   final String path;
   final String date;
 
-  AudioEntity.AudioEntity({
+  AudioEntity({
     this.id,
     required this.title,
     required this.path,
@@ -20,7 +20,7 @@ class StringItem extends AudioEntity {
     required String title,
     required String path,
     required String date,
-  }) : super.AudioEntity(id: id, title: title, path: path, date: date);
+  }) : super(id: id, title: title, path: path, date: date);
 
   Map<String, dynamic> toMap() {
     return {

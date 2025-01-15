@@ -1,5 +1,5 @@
 
-import '../../data/models/AudioItemDB.dart';
+import '../../data/local/models/AudioModel.dart';
 import '../../data/repositories/AddAudioRepository.dart';
 
 class GetCustomAudioUseCase {
