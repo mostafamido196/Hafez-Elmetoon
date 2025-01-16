@@ -5,8 +5,9 @@ import 'package:provider/provider.dart';
 
 import '../../core/UIState.dart';
 import '../Models/AudioItem.dart';
+import '../PlayingAudioViewModel.dart';
 import 'component/AudioListShimmer.dart';
-import 'AudioViewModel.dart';
+import 'AudioListViewModel.dart';
 
 class AddAudioScreen extends StatelessWidget {
   final String title;
@@ -15,44 +16,48 @@ class AddAudioScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<AddAudioViewModel>(
-        create: (context) {
-          final viewModel = AddAudioViewModel();
-          viewModel.init();
-          return viewModel;
-        },
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) {
+              final viewModel = AudioListViewModel();
+              viewModel.init();
+              return viewModel;
+            },
+          ),
+          ChangeNotifierProvider(create: (_) => PlayingAudioViewModel()),
+        ],
         child: Scaffold(
           appBar: AppBar(
             title: Text('حافظ المتون'),
           ),
-          body: Consumer<AddAudioViewModel>(
-              builder: (context, viewModel, child) {
-                final state = viewModel.state;
-                print('mos samy state: $state');
-                return Column(children: [
-                  AddAudioWidget(
-                      viewModel.addAudioFromFiles,
-                      viewModel.isRecording,
-                      viewModel.startRecording,
-                      viewModel.stopRecording),
-                  const Divider(
-                    color: Colors.grey,
-                    thickness: 2,
-                  ),
-                  AudioListState(state, viewModel)
-                ]);
-              }),
+          body: Consumer<AudioListViewModel>(
+              builder: (context, audioListViewModel, child) {
+            final state = audioListViewModel.state;
+            print('mos samy state: $state');
+            return Column(children: [
+              AddAudioWidget(
+                  audioListViewModel.addAudioFromFiles,
+                  audioListViewModel.isRecording,
+                  audioListViewModel.startRecording,
+                  audioListViewModel.stopRecording),
+              const Divider(
+                color: Colors.grey,
+                thickness: 2,
+              ),
+              AudioListState(state, audioListViewModel)
+            ]);
+          }),
         ));
   }
 
-  Widget AudioListState(UIState state, AddAudioViewModel audioManager) {
+  Widget AudioListState(UIState state, AudioListViewModel audioManager) {
     if (state is Loading)
       return Expanded(child: AudioListShimmer());
     else if (state is Success<List<AudioItem>>)
       return AudioList(
           audioList: state.data,
-          onDelete: audioManager.onDeleteItem,
-          onPlayAudio: audioManager.onAudioPlay);
+          onDelete: audioManager.onDeleteItem);
     else if (state is Error)
       return Center(child: Text("Error: ${state.errorMessage}"));
     else

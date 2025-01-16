@@ -17,7 +17,7 @@ import '../Models/AudioItem.dart';
 
 import 'package:path/path.dart' as p;
 
-class AddAudioViewModel extends ChangeNotifier {
+class AudioListViewModel extends ChangeNotifier {
    GetCustomAudioUseCase? _getCustomAudioUseCase;
    AddCustomAudioUseCase? _addCustomAudioUseCase;
    DeleteCustomAudioUseCase? _deleteCustomAudioUseCase;
@@ -26,8 +26,6 @@ class AddAudioViewModel extends ChangeNotifier {
 
   UIState get state => _state;
 
-  final AudioPlayer audioPlayer = AudioPlayer();
-  int playingIndex = -1; // initial not working
   final audioRecorder = AudioRecorder();
   bool isRecording = false;
 
@@ -77,25 +75,6 @@ class AddAudioViewModel extends ChangeNotifier {
     await fetchData();
   }
 
-  Future<void> onAudioPlay(int index, String path, int repeat) async {
-    // Check if file exists
-    if (!await File(path).exists()) {
-      print('Error: File does not exist at path: $path');
-      return;
-    }
-
-    playingIndex = index;
-    notifyListeners();
-    for (int i = 0; i < repeat; i++) {
-      try {
-        await audioPlayer.stop(); // Stop any currently playing audio
-        await audioPlayer.play(DeviceFileSource(path)); // Start new audio
-        await audioPlayer.onPlayerComplete.first; // Wait for audio to finish
-      } catch (e) {
-        print("Error playing audio: $e");
-      }
-    }
-  }
 
   Future<void> startRecording() async {
     if (await audioRecorder.hasPermission()) {
@@ -124,14 +103,9 @@ class AddAudioViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void stopAudio() async {
-    await audioPlayer.stop();
-    playingIndex = -1;
-    notifyListeners();
-  }
+
 
   Future<void> onDeleteItem(int index) async {
-    if (index == this.playingIndex) await audioPlayer.stop();
     await _deleteCustomAudioUseCase?.execute(index);
     await fetchData();
   }
