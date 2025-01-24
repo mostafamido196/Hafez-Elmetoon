@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hafez_elmetoon/screens/PlayingAudioViewModel.dart';
 import 'package:hafez_elmetoon/screens/addAudio/component/repeatePopup.dart';
 import '../../Models/AudioItem.dart';
@@ -22,7 +21,7 @@ class AudioList extends StatelessWidget {
         itemBuilder: (context, index) {
           return Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: GestureDetector(
               onTap: () => showNumberPickerDialog(
                 context,
